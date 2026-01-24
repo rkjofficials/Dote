@@ -24,24 +24,32 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-background">
-      <NotesSidebar
-        notes={notes}
-        activeNoteId={activeNoteId}
-        onSelectNote={setActiveNoteId}
-        onCreateNote={createNote}
-        onDeleteNote={deleteNote}
-      />
-
-      {activeNote ? (
-        <NoteEditor
-          note={activeNote}
-          onUpdate={updateNote}
-          onExportPdf={handleExportPdf}
+    <div className="flex flex-col h-screen w-full bg-background">
+      <div className="flex flex-1 overflow-hidden">
+        <NotesSidebar
+          notes={notes}
+          activeNoteId={activeNoteId}
+          onSelectNote={setActiveNoteId}
+          onCreateNote={createNote}
+          onDeleteNote={deleteNote}
         />
-      ) : (
-        <EmptyState />
-      )}
+
+        {activeNote ? (
+          <NoteEditor
+            note={activeNote}
+            onUpdate={updateNote}
+            onExportPdf={handleExportPdf}
+          />
+        ) : (
+          <EmptyState />
+        )}
+      </div>
+      
+      <footer className="border-t border-border bg-card px-4 py-3 text-center">
+        <p className="font-notes text-sm text-muted-foreground">
+          Built with <span className="text-primary">♥</span> by Rahul Kumar Jagat
+        </p>
+      </footer>
     </div>
   );
 };

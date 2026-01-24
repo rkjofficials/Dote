@@ -173,11 +173,19 @@ export function NoteEditor({ note, onUpdate, onExportPdf }: NoteEditorProps) {
     try {
       const drawingImages = new Map<string, string>();
 
+      // Export all drawings
       for (const drawing of drawings) {
         const canvas = canvasRefs.current.get(drawing.id);
         if (canvas) {
-          const image = await canvas.exportImage();
-          drawingImages.set(drawing.id, image);
+          try {
+            const image = await canvas.exportImage();
+            if (image) {
+              drawingImages.set(drawing.id, image);
+            }
+          } catch (drawError) {
+            console.warn(`Failed to export drawing ${drawing.id}:`, drawError);
+            // Continue with other drawings if one fails
+          }
         }
       }
 
@@ -188,7 +196,8 @@ export function NoteEditor({ note, onUpdate, onExportPdf }: NoteEditorProps) {
       toast.success('PDF downloaded!');
     } catch (error) {
       console.error('Export failed', error);
-      toast.error('Failed to export PDF');
+      const errorMsg = error instanceof Error ? error.message : 'Failed to export PDF';
+      toast.error(errorMsg);
     } finally {
       setIsExporting(false);
     }

@@ -1,12 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useNotes } from '@/hooks/useNotes';
+import { NotesSidebar } from '@/components/NotesSidebar';
+import { NoteEditor } from '@/components/NoteEditor';
+import { EmptyState } from '@/components/EmptyState';
+import { exportNoteToPdf } from '@/utils/pdfExport.tsx';
+import { Note } from '@/types/note';
 
 const Index = () => {
+  const {
+    notes,
+    activeNote,
+    activeNoteId,
+    setActiveNoteId,
+    createNote,
+    updateNote,
+    deleteNote,
+  } = useNotes();
+
+  const handleExportPdf = async (
+    note: Note,
+    drawingImages: Map<string, string>
+  ) => {
+    await exportNoteToPdf(note, drawingImages);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="flex h-screen w-full bg-background">
+      <NotesSidebar
+        notes={notes}
+        activeNoteId={activeNoteId}
+        onSelectNote={setActiveNoteId}
+        onCreateNote={createNote}
+        onDeleteNote={deleteNote}
+      />
+
+      {activeNote ? (
+        <NoteEditor
+          note={activeNote}
+          onUpdate={updateNote}
+          onExportPdf={handleExportPdf}
+        />
+      ) : (
+        <EmptyState />
+      )}
     </div>
   );
 };

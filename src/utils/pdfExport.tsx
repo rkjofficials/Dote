@@ -27,6 +27,25 @@ const styles = StyleSheet.create({
     padding: 40,
     backgroundColor: '#faf8f5',
     fontFamily: 'Helvetica',
+    position: 'relative',
+  },
+  linesContainer: {
+    position: 'absolute',
+    top: 48,
+    left: 40,
+    right: 40,
+    bottom: 40,
+  },
+  line: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#b8b0a8',
+    opacity: 0.3,
+    marginTop: 31,
+  },
+  contentContainer: {
+    position: 'relative',
+    zIndex: 1,
   },
   title: {
     fontSize: 28,
@@ -45,6 +64,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     pageBreakInside: 'avoid' as const,
+    backgroundColor: '#faf8f5',
+    padding: 10,
+    borderRadius: 8,
   },
   drawingLabel: {
     fontSize: 12,
@@ -59,6 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#999',
     textAlign: 'center' as const,
+    zIndex: 2,
   },
 });
 
@@ -67,30 +90,47 @@ interface NotePDFProps {
   drawingImages: Map<string, string>;
 }
 
+const LinedPaper: React.FC = () => {
+  const lines = Array.from({ length: 22 }, (_, i) => i);
+
+  return (
+    <View style={styles.linesContainer}>
+      {lines.map((i) => (
+        <View key={i} style={styles.line} />
+      ))}
+    </View>
+  );
+};
+
 const NotePDF: React.FC<NotePDFProps> = ({ note, drawingImages }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.title}>{note.title}</Text>
-      {note.content && (
-        <Text style={styles.content}>{note.content}</Text>
-      )}
-      {note.drawings.map((drawing, index) => {
-        const imageData = drawingImages.get(drawing.id);
-        if (!imageData) return null;
-        
-        return (
-          <View key={drawing.id} style={styles.drawingContainer}>
-            <Text style={styles.drawingLabel}>Drawing {index + 1}</Text>
-            <Image
-              src={imageData}
-              style={{
-                width: Math.min(drawing.width / 2, 400),
-                height: Math.min(drawing.height / 2, 300),
-              }}
-            />
-          </View>
-        );
-      })}
+      <LinedPaper />
+
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>{note.title}</Text>
+        {note.content && (
+          <Text style={styles.content}>{note.content}</Text>
+        )}
+        {note.drawings.map((drawing, index) => {
+          const imageData = drawingImages.get(drawing.id);
+          if (!imageData) return null;
+
+          return (
+            <View key={drawing.id} style={styles.drawingContainer}>
+              <Text style={styles.drawingLabel}>Drawing {index + 1}</Text>
+              <Image
+                src={imageData}
+                style={{
+                  width: Math.min(drawing.width / 2, 400),
+                  height: Math.min(drawing.height / 2, 300),
+                }}
+              />
+            </View>
+          );
+        })}
+      </View>
+
       <Text style={styles.footer}>
         Created with StudyNotes • {new Date().toLocaleDateString()}
       </Text>

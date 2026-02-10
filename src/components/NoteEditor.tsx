@@ -58,11 +58,73 @@ export function NoteEditor({ note, onUpdate, onExportPdf }: NoteEditorProps) {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) {
+      if ((e.ctrlKey || e.metaKey) && textareaRef.current) {
+        const isFocused = document.activeElement === textareaRef.current;
+
         switch (e.key.toLowerCase()) {
           case 's':
             e.preventDefault();
             handleSave();
+            break;
+          case 'b':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('**');
+            }
+            break;
+          case 'i':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('*');
+            }
+            break;
+          case 'u':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('__');
+            }
+            break;
+          case 'h':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('==');
+            }
+            break;
+          case 'l':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('- ');
+            }
+            break;
+          case 'o':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('1. ');
+            }
+            break;
+          case 'q':
+            if (isFocused) {
+              e.preventDefault();
+              handleFormat('> ');
+            }
+            break;
+          case '1':
+            if (isFocused && e.shiftKey === false) {
+              e.preventDefault();
+              handleFormat('# ');
+            }
+            break;
+          case '2':
+            if (isFocused && e.shiftKey === false) {
+              e.preventDefault();
+              handleFormat('## ');
+            }
+            break;
+          case '3':
+            if (isFocused && e.shiftKey === false) {
+              e.preventDefault();
+              handleFormat('### ');
+            }
             break;
         }
       }
@@ -70,7 +132,7 @@ export function NoteEditor({ note, onUpdate, onExportPdf }: NoteEditorProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [title, content, color, drawings]);
+  }, [content]);
 
   const markUnsaved = () => {
     setIsSaved(false);
